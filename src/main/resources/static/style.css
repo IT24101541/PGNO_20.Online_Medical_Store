@@ -1,0 +1,206 @@
+/* Reset some default browser styles */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Header styles */
+header {
+    display: flex;
+    justify-content: space-between;  /* Spreads out the content */
+    align-items: center;  /* Vertically aligns the content */
+    background-color: #333;
+    color: white;
+    padding: 1em 2em;
+    position: relative;  /* For absolute positioning of the logo */
+}
+
+/* Logo styles */
+header .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);  /* Centers the logo horizontally */
+}
+
+header .logo img {
+    max-width: 150px;  /* Control logo size */
+    height: auto;
+}
+
+/* Navigation styles */
+nav {
+    display: flex;
+    justify-content: flex-end;  /* Aligns the navigation links to the right */
+}
+
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main content */
+main {
+    padding: 2em;
+    text-align: left;
+}
+
+/* Flex container for the main section */
+main section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2em;
+    flex-wrap: wrap;
+}
+
+/* Text Section */
+.text-section {
+    max-width: 400px;
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px 10px 0 0;
+    font-family: 'Poppins', sans-serif;  /* Added Poppins font to buttons */
+}
+
+/* Register button */
+button.register {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Login button */
+button.login {
+    background-color: #007BFF;
+    color: white;
+}
+
+/* Image Section */
+main .image-section img {
+    max-width: 500px;  /* Increase max-width to make the image bigger */
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* Contact Section */
+.contact-details {
+    padding: 2em;
+}
+
+/* Location Section */
+.location-section {
+    margin-bottom: 2em;
+    padding: 1em;
+    background-color: #f9f9f9;  /* Light background color */
+    border-radius: 8px;  /* Rounded corners for better look */
+}
+
+.location-section h3 {
+    margin-bottom: 1em;
+    color: #333;
+    font-weight: bold;
+}
+
+/* List Styling */
+.location-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.location-section li {
+    margin: 0.5em 0;
+}
+
+/*Shop images*/
+.product img {
+    width: 150px;
+    height: auto;
+    border-radius: 8px; /* optional for rounded corners */
+}
+
+/*Shop images segregation*/
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5em;
+    justify-content: center;
+    padding: 2em;
+}
+
+.product {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1em;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 220px;
+    height: 380px; /* Fixed height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.product img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.product-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5em;
+    flex-grow: 1;
+
+    /* Multi-line ellipsis (2 lines) */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.product-price {
+    color: #28a745;
+    font-weight: bold;
+    margin-bottom: 1em;
+}
+
+button.add-to-cart {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    margin-top: auto;
+}
+
+
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 0.2em;  /* Reduced padding */
+    font-size: 0.75em; /* Reduced font size */
+    width: 100%;
+    margin-top: 2em; /* Optional: Add space above footer to separate it from content */
+}
