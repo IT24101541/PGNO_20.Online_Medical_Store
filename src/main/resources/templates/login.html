@@ -1,18 +1,82 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><title>Login</title></head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login</title>
+    <link rel="stylesheet" href="../static/style.css"/>
+    <link rel="icon" type="image/png" href="../static/medical-store.webp"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+    <style>
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            width: 120px;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group select {
+            flex: 1;
+            padding: 10px;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .form-container button {
+            margin-left: 120px;
+        }
+    </style>
+</head>
 <body>
-<h2>Login</h2>
-<form th:action="@{/login}" method="post">
-    Email: <input type="email" name="email" required/><br/>
-    Password: <input type="password" name="password" required/><br/>
-    Role:
-    <select name="role">
-        <option value="customer">Customer</option>
-        <option value="admin">Admin</option>
-    </select><br/>
-    <input type="submit" value="Login"/>
-</form>
-<p th:if="${message}" th:text="${message}" style="color: green; text-align: center;"></p>
+<header>
+    <h1>Login</h1>
+    <div class="logo">
+        <img src="../static/medical-store.webp" alt="Logo" style="max-width: 95px; height: auto;"/>
+    </div>
+    <nav>
+        <a href="Home.html">HOME</a>
+        <a href="contact.html">CONTACT</a>
+    </nav>
+</header>
+
+<main style="padding: 2em; font-family: 'Poppins', sans-serif; text-align: center;">
+    <h2>Login to Your Account</h2>
+
+    <!-- Registration success -->
+    <p th:if="${message}" th:text="${message}" style="color: green; margin-bottom: 1em;"></p>
+    <!-- Login error -->
+    <p th:if="${error}" th:text="${error}" style="color: red; margin-bottom: 1em;"></p>
+
+    <form action="/login" method="POST" class="form-container">
+        <div class="form-group">
+            <label for="role">Login as:</label>
+            <select id="role" name="role" required>
+                <option value="">Select Role</option>
+                <option value="customer">Customer</option>
+                <option value="admin">Administrator</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required placeholder="Enter your email" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required placeholder="Enter your password" />
+        </div>
+        <button type="submit" style="padding: 12px 20px; background-color: #007BFF; color: white; border: none; cursor: pointer;">
+            Login
+        </button>
+    </form>
+</main>
+
+<footer style="margin-top: 135px; text-align: center;">
+    <p>&copy; 2025 GetMED | All Rights Reserved</p>
+</footer>
 </body>
 </html>
