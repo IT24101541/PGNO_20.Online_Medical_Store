@@ -1,12 +1,20 @@
-// Admin.java
+// Customer.java
 package com.getmed.pgno20.model;
 
-public class Admin {
+public class Customer {
     private String name;
     private String address;
     private String contactNo;
     private String email;
     private String password;
+
+    public Customer(String name, String address, String contactNo, String email, String password) {
+        this.name = name;
+        this.address = address;
+        this.contactNo = contactNo;
+        this.email = email;
+        this.password = password;
+    }
 
     // Getters and Setters
 
