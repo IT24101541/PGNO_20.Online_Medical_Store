@@ -1,14 +1,20 @@
-// Admin.java
 package com.getmed.pgno20.model;
 
 public class Admin {
+    private int id;
     private String name;
     private String address;
     private String contactNo;
     private String email;
     private String password;
 
-    public Admin(String name, String address, String contactNo, String email, String password) {
+    // Default constructor (required for Spring form binding)
+    public Admin() {
+    }
+
+    // Parameterized constructor
+    public Admin(int id, String name, String address, String contactNo, String email, String password) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.contactNo = contactNo;
@@ -17,6 +23,14 @@ public class Admin {
     }
 
     // Getters and Setters
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -34,7 +48,9 @@ public class Admin {
         this.address = address;
     }
 
-    public String getContactNo() {  return contactNo;   }
+    public String getContactNo() {
+        return contactNo;
+    }
 
     public void setContactNo(String contactNo) {
         this.contactNo = contactNo;

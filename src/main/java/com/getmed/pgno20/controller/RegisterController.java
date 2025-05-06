@@ -4,14 +4,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.File;// import the file class
+import java.io.FileWriter;// writing the file
+import java.io.IOException;// handle errors
 
 @Controller
 public class RegisterController {
 
-    private final String dataDir = "data";
+    private final String dataDir;{
+        dataDir = "data";
+    }
 
     public RegisterController() {
         // Ensure data directory exists
