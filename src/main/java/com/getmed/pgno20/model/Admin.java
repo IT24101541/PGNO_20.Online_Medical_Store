@@ -8,11 +8,8 @@ public class Admin {
     private String email;
     private String password;
 
-    // Default constructor (required for Spring form binding)
-    public Admin() {
-    }
+    public Admin() {}
 
-    // Parameterized constructor
     public Admin(int id, String name, String address, String contactNo, String email, String password) {
         this.id = id;
         this.name = name;
@@ -22,8 +19,7 @@ public class Admin {
         this.password = password;
     }
 
-    // Getters and Setters
-
+    // Getters and setters
     public int getId() {
         return id;
     }

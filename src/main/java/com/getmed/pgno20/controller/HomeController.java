@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-    @GetMapping("/")
+    @GetMapping("/homepage")
     public String homePage() {
         return "home";  // home.html
     }
@@ -16,19 +16,9 @@ public class HomeController {
         return "contact";  // contact.html
     }
 
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";  // register.html
-    }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";  // login.html
-    }
-
     @GetMapping("/admin_home")
     public String adminHomePage() {
-        return "admin_home"; // This should match admin_home.html in templates
+        return "admin_dashboard"; // This should match admin_home.html in templates
     }
 
     @GetMapping("/customer_home")

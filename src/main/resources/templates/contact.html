@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GetMED</title>
-    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="stylesheet" href="/style.css" />
     <link rel="icon" type="image/png" href="../static/medical-store.webp" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -12,11 +12,11 @@
 <header>
     <h1>Contact</h1>
     <div class="logo">
-        <img src="../static/medical-store.webp" alt="Logo" style="max-width: 95px; height: auto;" />
+        <img th:src="@{/medical-store.webp}" alt="Logo" style="max-width: 95px; height: auto;" />
     </div>
     <nav>
-        <a href="home.html">HOME</a>
-        <a href="contact.html">CONTACT</a>
+        <a th:href="@{/homepage}">HOME</a>
+        <a th:href="@{/contact}">CONTACT</a>
     </nav>
 </header>
 

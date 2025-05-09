@@ -1,0 +1,3 @@
+1,Umesh Luke,122/A Paratta Road Keselwatta,0788109676,umeshluke@outlook.com,umesh#2003
+2,Sinduja Bandara,58 Rawatawatte Moratuwa,0746589547,sindu@gmail.com,banda#123
+3,Nipula Nuwanjith,65 Main Road Gampaha,0764218596,nuwanjith123@gmail.com,nuwan#123

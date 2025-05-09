@@ -1,50 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register</title>
-    <link rel="stylesheet" href="../static/style.css" />
-    <link rel="icon" type="image/png" href="../static/medical-store.webp" />
+    <title>Register - GetMED</title>
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <link rel="icon" type="image/png" th:href="@{/medical-store.webp}" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 <header>
-    <h1>Register</h1>
+    <h1>Register with GetMED</h1>
     <div class="logo">
-        <img src="../static/medical-store.webp" alt="Logo" style="max-width: 95px; height: auto;" />
+        <img th:src="@{/medical-store.webp}" alt="Logo" style="max-width: 95px; height: auto;" />
     </div>
     <nav>
-        <a href="home.html">HOME</a>
-        <a href="contact.html">CONTACT</a>
+        <a th:href="@{/homepage}">HOME</a>
+        <a th:href="@{/contact}">CONTACT</a>
+        <a th:href="@{/login}">Login</a>
     </nav>
 </header>
 
-<main style="padding: 2em; text-align: center; font-family: 'Poppins', sans-serif;">
-    <h2 style="margin-bottom: 1em;">Register As</h2>
-
-    <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
-        <!-- Customer Card -->
-        <div onclick="window.location.href='customer_register.html'"
-             style="background-color: #e8f5e9; border: 2px solid #4CAF50; border-radius: 15px; width: 250px; padding: 30px; cursor: pointer; transition: transform 0.2s;"
-             onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            <h3 style="color: #2e7d32;">Customer</h3>
-            <p style="font-size: 14px; color: #444;">Sign up to shop medicines, manage orders, and enjoy convenient doorstep delivery.</p>
-        </div>
-
-        <!-- Administrator Card -->
-        <div onclick="window.location.href='admin_register.html'"
-             style="background-color: #e3f2fd; border: 2px solid #007BFF; border-radius: 15px; width: 250px; padding: 30px; cursor: pointer; transition: transform 0.2s;"
-             onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            <h3 style="color: #1565c0;">Administrator</h3>
-            <p style="font-size: 14px; color: #444;">Register to manage product listings, oversee orders, and handle system operations.</p>
-        </div>
+<main style="text-align: center; padding: 2em;">
+    <h2>Sign Up</h2>
+    <div th:if="${message}" style="color: green; text-align: center;">
+        <p th:text="${message}"></p>
     </div>
+    <div th:if="${error}" style="color: red; text-align: center;">
+        <p th:text="${error}"></p>
+    </div>
+    <form th:action="@{/register}" th:object="${user}" method="post" style="max-width: 400px; margin: 0 auto;">
+        <div style="margin-bottom: 15px;">
+            <label for="role">Role:</label><br />
+            <select id="role" th:field="*{role}" required style="padding: 8px; width: 100%;">
+                <option value="admin">Admin</option>
+                <option value="customer">Customer</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="name">Name:</label><br />
+            <input type="text" id="name" th:field="*{name}" required placeholder="Enter your name" style="padding: 10px; width: 100%;" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="address">Address:</label><br />
+            <input type="text" id="address" th:field="*{address}" required placeholder="Enter your address" style="padding: 10px; width: 100%;" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="contactNo">Contact No:</label><br />
+            <input type="text" id="contactNo" th:field="*{contactNo}" required placeholder="Enter your contact number" style="padding: 10px; width: 100%;" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="email">Email:</label><br />
+            <input type="email" id="email" th:field="*{email}" required placeholder="Enter your email" style="padding: 10px; width: 100%;" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="password">Password:</label><br />
+            <input type="password" id="password" th:field="*{password}" required placeholder="Enter your password" style="padding: 10px; width: 100%;" />
+        </div>
+        <button type="submit" style="padding: 12px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Register</button>
+    </form>
+    <p style="text-align: center; margin-top: 1em;">
+        Already have an account? <a th:href="@{/login}">Login here</a>
+    </p>
 </main>
 
-<footer style="margin-top: 135px; text-align: center;">
-    <p>&copy; 2025 GetMED | All Rights Reserved</p>
+<footer style="text-align: center;">
+    <p>© 2025 GetMED | All Rights Reserved</p>
 </footer>
-
 </body>
 </html>

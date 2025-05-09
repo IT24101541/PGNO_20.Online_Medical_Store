@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GetMED - Customer Dashboard</title>
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <link rel="icon" type="image/png" th:href="@{/medical-store.webp}" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<header id="customer-panel">
+    <div class="logo">
+        <img th:src="@{/medical-store.webp}" alt="Logo" style="max-width: 95px; height: auto;" />
+    </div>
+    <nav class="customer-nav">
+        <a th:href="@{/customer/dashboard(section='user')}" th:classappend="${section == 'user'} ? 'active' : ''">
+            <i class="fas fa-user"></i> User
+        </a>
+        <a th:href="@{/customer/dashboard(section='order')}" th:classappend="${section == 'order'} ? 'active' : ''">
+            <i class="fas fa-shopping-cart"></i> Order
+        </a>
+        <a th:href="@{/customer/dashboard(section='shop')}" th:classappend="${section == 'shop'} ? 'active' : ''">
+            <i class="fas fa-pills"></i> Shop
+        </a>
+        <a th:href="@{/logout}">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </nav>
+</header>
+
+<main class="main-content" style="text-align: center; padding: 2em; font-family: 'Poppins', sans-serif;">
+    <h1>Welcome, Customer!</h1>
+    <div th:switch="${section}">
+        <!-- User Section -->
+        <div th:case="'user'">
+            <!-- Existing User Section -->
+        </div>
+
+        <!-- Order Section -->
+        <div th:case="'order'">
+            <div th:switch="${action}">
+                <div th:case="null">
+                    <h2>Your Orders</h2>
+                    <table style="margin: 0 auto; border-collapse: collapse; width: 80%;">
+                        <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="border: 1px solid #ddd; padding: 8px;">ID</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Medicines</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Total Quantity</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Date</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Status</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Prescription</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Receipt</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${order.id}"></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${#strings.join(order.medicineNames, ', ')}"></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${order.totalQuantity}"></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${order.orderDate}"></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${order.status}"></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                <a th:if="${order.prescriptionUrl}" th:href="@{/orders/download/{fileUrl}(fileUrl=${order.prescriptionUrl})}" style="color: #007BFF;">Download</a>
+                                <span th:unless="${order.prescriptionUrl}">N/A</span>
+                            </td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                <a th:if="${order.receiptUrl}" th:href="@{/orders/download/{fileUrl}(fileUrl=${order.receiptUrl})}" style="color: #007BFF;">Download</a>
+                                <span th:unless="${order.receiptUrl}">N/A</span>
+                            </td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                <a th:href="@{/customer/dashboard(section='order', action='edit', id=${order.id})}" style="color: #FFC107; margin-right: 10px;">Edit</a>
+                                <a th:href="@{/customer/deleteOrder(id=${order.id})}" style="color: #f44336;">Delete</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:case="${action == 'create' or action == 'edit'}">
+                    <h2 th:text="${order.id == 0 ? 'Create New Order' : 'Edit Order'}"></h2>
+                    <form th:action="@{/customer/dashboard}" th:object="${order}" method="post" enctype="multipart/form-data" style="max-width: 400px; margin: 0 auto; text-align: left;">
+                        <input type="hidden" th:field="*{id}" />
+                        <div style="margin-bottom: 15px;">
+                            <label>Medicines:</label><br />
+                            <div th:each="med, iter : ${order.medicineQuantities}">
+                                <span th:text="${med.key}"></span>
+                                <input type="number" th:name="'medicineQuantities[' + ${med.key} + ']'" th:value="${med.value}" min="1" style="width: 60px; margin-left: 10px;" />
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label for="prescription">Prescription (Optional):</label><br />
+                            <input id="prescription" type="file" name="prescription" style="width: 100%;" />
+                            <span th:if="${order.prescriptionUrl}" style="display: block; margin-top: 5px;">
+                                Current: <a th:href="@{/orders/download/{fileUrl}(fileUrl=${order.prescriptionUrl})}" style="color: #007BFF;">Download</a>
+                            </span>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label for="receipt">Payment Receipt (Optional):</label><br />
+                            <input id="receipt" type="file" name="receipt" style="width: 100%;" />
+                            <span th:if="${order.receiptUrl}" style="display: block; margin-top: 5px;">
+                                Current: <a th:href="@{/orders/download/{fileUrl}(fileUrl=${order.receiptUrl})}" style="color: #007BFF;">Download</a>
+                            </span>
+                        </div>
+                        <div style="text-align: center;">
+                            <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Process Order</button>
+                            <a th:href="@{/customer/dashboard(section='order')}" style="display: inline-block; margin-left: 10px; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Section -->
+        <div th:case="'shop'">
+            <h2>Medicine Catalog</h2>
+            <div style="margin-bottom: 1em;">
+                <a th:href="@{/customer/dashboard(section='shop', sort='high')}" style="padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">High to Low</a>
+                <a th:href="@{/customer/dashboard(section='shop', sort='low')}" style="padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px; margin-left: 10px;">Low to High</a>
+            </div>
+            <div th:if="${medicines == null or medicines.isEmpty()}">
+                <p>No medicines available at the moment.</p>
+            </div>
+            <div th:if="${medicines != null and !medicines.isEmpty()}" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+                <div th:each="medicine : ${medicines}" style="border: 1px solid #ddd; padding: 10px; border-radius: 4px; width: 200px; text-align: center;">
+                    <img th:src="${medicine.imageUrl} ?: '/medical-store.webp'" alt="Medicine Image" style="max-width: 100px; height: auto;" />
+                    <div style="margin-top: 10px;" th:text="${medicine.name}"></div>
+                    <div style="margin-top: 5px;" th:text="${medicine.description}"></div>
+                    <div style="margin-top: 5px;" th:text="'Rs. ' + ${medicine.price}"></div>
+                    <div style="margin-top: 10px;">
+                        <a th:if="${!selectedMedicines.contains(medicine)}" th:href="@{/customer/dashboard(section='shop', action='add', id=${medicine.id})}" style="padding: 8px 16px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px;">Add to Order</a>
+                        <a th:if="${selectedMedicines.contains(medicine)}" th:href="@{/customer/dashboard(section='shop', action='remove', id=${medicine.id})}" style="padding: 8px 16px; background-color: #f44336; color: white; text-decoration: none; border-radius: 4px;">Remove from Order</a>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${selectedMedicines != null and !selectedMedicines.isEmpty()}" style="margin-top: 1em; text-align: center;">
+                <a th:href="@{/customer/dashboard(section='shop', action='send-to-order')}" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px;">Send to Order</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer style="text-align: center;">
+    <p>© 2025 GetMED | All Rights Reserved</p>
+</footer>
+</body>
+</html>
