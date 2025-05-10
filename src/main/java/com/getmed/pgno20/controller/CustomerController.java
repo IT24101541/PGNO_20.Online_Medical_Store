@@ -48,12 +48,10 @@ public class CustomerController {
     public String registerUser(@ModelAttribute User user, Model model) {
         if ("customer".equalsIgnoreCase(user.getRole())) {
             Customer customer = new Customer();
-            // Check if a customer with the same email already exists
             if (customerService.getCustomerByEmail(user.getEmail()) != null) {
                 model.addAttribute("error", "A customer with this email already exists.");
                 return "register";
             }
-            // Assign a new ID based on the highest existing ID
             List<Customer> allCustomers = customerService.getAllCustomers();
             int maxId = allCustomers.stream().mapToInt(Customer::getId).max().orElse(0);
             customer.setId(maxId + 1);
@@ -106,17 +104,17 @@ public class CustomerController {
             selectedMedicines = new ArrayList<>();
             session.setAttribute("selectedMedicines", selectedMedicines);
         } else {
-            // Validate the list to handle deserialization issues
             try {
-                // Attempt to access an element to trigger any deserialization issues
                 if (!selectedMedicines.isEmpty()) selectedMedicines.get(0);
             } catch (Exception e) {
-                // If deserialization fails, clear the invalid session data
                 selectedMedicines = new ArrayList<>();
                 session.setAttribute("selectedMedicines", selectedMedicines);
                 System.err.println("Failed to deserialize selectedMedicines, resetting to empty list: " + e.getMessage());
             }
         }
+
+        System.out.println("Selected Medicines before processing: " + selectedMedicines.size());
+        selectedMedicines.forEach(med -> System.out.println("Medicine: " + med.getName()));
 
         if ("shop".equals(section)) {
             List<Medicine> medicines = MedicineFileUtil.readMedicinesFromFile();
@@ -131,20 +129,25 @@ public class CustomerController {
                         .orElse(null);
                 if (medicineToAdd != null && !selectedMedicines.contains(medicineToAdd)) {
                     selectedMedicines.add(medicineToAdd);
+                    session.setAttribute("selectedMedicines", selectedMedicines);
                 }
                 return "redirect:/customer/dashboard?section=shop";
             }
 
             if ("remove".equals(action) && id != null) {
                 selectedMedicines.removeIf(m -> m.getId() == id);
+                session.setAttribute("selectedMedicines", selectedMedicines);
                 return "redirect:/customer/dashboard?section=shop";
             }
 
             if ("send-to-order".equals(action)) {
+                System.out.println("Send to Order clicked. Selected Medicines: " + selectedMedicines.size());
                 if (!selectedMedicines.isEmpty()) {
                     return "redirect:/customer/dashboard?section=order&action=create";
+                } else {
+                    System.out.println("No medicines selected, staying in shop section.");
+                    return "redirect:/customer/dashboard?section=shop";
                 }
-                return "redirect:/customer/dashboard?section=shop";
             }
         } else if ("order".equals(section)) {
             List<Order> orders = orderQueueService.getAllOrders().stream()
@@ -158,15 +161,23 @@ public class CustomerController {
                     order = orders.stream().filter(o -> o.getId() == id).findFirst().orElse(new Order());
                 }
                 order.setCustomerEmail(email);
-                if (!selectedMedicines.isEmpty()) {
+                if ("create".equals(action) && !selectedMedicines.isEmpty()) {
                     for (Medicine med : selectedMedicines) {
-                        order.getMedicineQuantities().put(med.getName(), 1); // Default quantity
+                        order.getMedicineQuantities().put(med.getName(), 1);
                     }
                     order.setTotalQuantity(selectedMedicines.size());
-                    selectedMedicines.clear();
-                    session.setAttribute("selectedMedicines", selectedMedicines);
+                    // Do not clear selectedMedicines here; clear after successful order submission
                 }
+                System.out.println("Order medicines in create/edit: " + order.getMedicineQuantities());
                 model.addAttribute("order", order);
+            }
+        } else if ("user".equals(section)) {
+            if ("edit".equals(action)) {
+                model.addAttribute("action", "edit");
+            } else if ("delete".equals(action)) {
+                customerService.deleteCustomer(customer.getId());
+                session.invalidate();
+                return "redirect:/";
             }
         }
 
@@ -186,7 +197,6 @@ public class CustomerController {
         Customer customer = customerService.getCustomerByEmail(email);
         if (customer == null) return "redirect:/login";
 
-        // Validate order creation per truth table
         boolean hasMedicine = !order.getMedicineQuantities().isEmpty();
         boolean hasPrescription = prescription != null && !prescription.isEmpty();
         boolean hasReceipt = receipt != null && !receipt.isEmpty();
@@ -196,7 +206,6 @@ public class CustomerController {
             return "redirect:/customer/dashboard?section=order&action=create";
         }
 
-        // Handle file uploads
         Path uploadPath = Paths.get(UPLOAD_DIR);
         if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
 
@@ -216,7 +225,30 @@ public class CustomerController {
         order.setTotalQuantity(order.getMedicineQuantities().values().stream().mapToInt(Integer::intValue).sum());
         orderQueueService.addOrder(order);
 
+        // Clear selectedMedicines only after successful order submission
+        session.setAttribute("selectedMedicines", new ArrayList<Medicine>());
+
         return "redirect:/customer/dashboard?section=order";
+    }
+
+    @PostMapping("/customer/dashboard/user")
+    public String updateUser(@ModelAttribute Customer customer, HttpSession session, Model model) {
+        String email = (String) session.getAttribute("loggedInUser");
+        if (email == null) return "redirect:/login";
+
+        Customer existingCustomer = customerService.getCustomerByEmail(email);
+        if (existingCustomer == null) return "redirect:/login";
+
+        existingCustomer.setName(customer.getName());
+        existingCustomer.setAddress(customer.getAddress());
+        existingCustomer.setContactNo(customer.getContactNo());
+        existingCustomer.setEmail(customer.getEmail());
+        existingCustomer.setPassword(customer.getPassword());
+        customerService.updateCustomer(existingCustomer);
+
+        session.setAttribute("loggedInUser", customer.getEmail());
+        model.addAttribute("message", "Profile updated successfully.");
+        return "redirect:/customer/dashboard?section=user";
     }
 
     @GetMapping("/customer/deleteOrder")
