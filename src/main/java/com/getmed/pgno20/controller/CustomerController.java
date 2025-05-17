@@ -150,15 +150,28 @@ public class CustomerController {
                 }
             }
         } else if ("order".equals(section)) {
-            List<Order> orders = orderQueueService.getAllOrders().stream()
-                    .filter(o -> o.getCustomerEmail().equals(email))
-                    .collect(Collectors.toList());
+            List<Order> orders = orderQueueService.getCustomerOrders(email);
             model.addAttribute("orders", orders);
+            model.addAttribute("selectedMedicines", selectedMedicines);
 
             if ("create".equals(action) || "edit".equals(action)) {
                 Order order = new Order();
                 if ("edit".equals(action) && id != null) {
                     order = orders.stream().filter(o -> o.getId() == id).findFirst().orElse(new Order());
+                    // Repopulate selectedMedicines for editing with full Medicine objects
+                    List<Medicine> allMedicines = MedicineFileUtil.readMedicinesFromFile();
+                    selectedMedicines.clear();
+                    selectedMedicines.addAll(order.getMedicineQuantities().keySet().stream()
+                            .map(name -> allMedicines.stream()
+                                    .filter(m -> m.getName().equals(name))
+                                    .findFirst()
+                                    .orElseGet(() -> {
+                                        Medicine med = new Medicine();
+                                        med.setName(name);
+                                        return med;
+                                    }))
+                            .collect(Collectors.toList()));
+                    session.setAttribute("selectedMedicines", selectedMedicines);
                 }
                 order.setCustomerEmail(email);
                 if ("create".equals(action) && !selectedMedicines.isEmpty()) {
@@ -166,7 +179,6 @@ public class CustomerController {
                         order.getMedicineQuantities().put(med.getName(), 1);
                     }
                     order.setTotalQuantity(selectedMedicines.size());
-                    // Do not clear selectedMedicines here; clear after successful order submission
                 }
                 System.out.println("Order medicines in create/edit: " + order.getMedicineQuantities());
                 model.addAttribute("order", order);
@@ -223,7 +235,7 @@ public class CustomerController {
         order.setCustomerEmail(email);
         order.setOrderDate(LocalDate.now().toString());
         order.setTotalQuantity(order.getMedicineQuantities().values().stream().mapToInt(Integer::intValue).sum());
-        orderQueueService.addOrder(order);
+        orderQueueService.addOrder(order); // Assumes this updates both queues
 
         // Clear selectedMedicines only after successful order submission
         session.setAttribute("selectedMedicines", new ArrayList<Medicine>());

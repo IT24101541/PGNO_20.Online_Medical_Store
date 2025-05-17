@@ -111,14 +111,26 @@
                 </div>
                 <div th:case="${action == 'create' or action == 'edit'}">
                     <h2 th:text="${order.id == 0 ? 'Create New Order' : 'Edit Order'}"></h2>
-                    <div th:if="${order.medicineQuantities == null or order.medicineQuantities.isEmpty()}" style="color: red; margin-bottom: 1em;">
+                    <!-- Order preview grid -->
+                    <div th:if="${selectedMedicines != null and !selectedMedicines.isEmpty()}" class="container">
+                        <h3 style="margin-bottom: 1em;">Order Preview</h3>
+                        <div th:each="medicine : ${selectedMedicines}" class="product">
+                            <img th:src="${medicine.imageUrl} ?: '/medical-store.webp'" alt="Medicine Image" />
+                            <div class="product-name" th:text="${medicine.name}"></div>
+                            <div th:text="${medicine.description}"></div>
+                            <div class="product-price" th:text="'Rs. ' + ${medicine.price}"></div>
+                            <input type="number" th:name="'medicineQuantities[' + ${medicine.name} + ']'" th:value="${order.medicineQuantities[medicine.name] ?: 1}" min="1" style="width: 60px; margin-top: 10px;" />
+                        </div>
+                    </div>
+                    <div th:if="${selectedMedicines == null or selectedMedicines.isEmpty()}" style="color: red; margin-bottom: 1em;">
                         No medicines selected. Please go to the shop section to add medicines.
                     </div>
+                    <!-- Order creation/edit form -->
                     <form th:action="@{/customer/dashboard}" th:object="${order}" method="post" enctype="multipart/form-data" style="max-width: 400px; margin: 0 auto; text-align: left;">
                         <input type="hidden" th:field="*{id}" />
                         <div style="margin-bottom: 15px;">
                             <label>Medicines:</label><br />
-                            <div th:each="med, iter : ${order.medicineQuantities}">
+                            <div th:each="med : ${order.medicineQuantities}">
                                 <span th:text="${med.key}"></span>
                                 <input type="number" th:name="'medicineQuantities[' + ${med.key} + ']'" th:value="${med.value}" min="1" style="width: 60px; margin-left: 10px;" />
                             </div>
@@ -127,15 +139,15 @@
                             <label for="prescription">Prescription (Optional):</label><br />
                             <input id="prescription" type="file" name="prescription" style="width: 100%;" />
                             <span th:if="${order.prescriptionUrl}" style="display: block; margin-top: 5px;">
-                                Current: <a th:href="@{/orders/download/{fileUrl}(fileUrl=${order.prescriptionUrl})}" style="color: #007BFF;">Download</a>
-                            </span>
+                Current: <a th:href="@{/orders/download/{fileUrl}(fileUrl=${order.prescriptionUrl})}" style="color: #007BFF;">Download</a>
+            </span>
                         </div>
                         <div style="margin-bottom: 15px;">
                             <label for="receipt">Payment Receipt (Optional):</label><br />
                             <input id="receipt" type="file" name="receipt" style="width: 100%;" />
                             <span th:if="${order.receiptUrl}" style="display: block; margin-top: 5px;">
-                                Current: <a th:href="@{/orders/download/{fileUrl}(fileUrl=${order.receiptUrl})}" style="color: #007BFF;">Download</a>
-                            </span>
+                Current: <a th:href="@{/orders/download/{fileUrl}(fileUrl=${order.receiptUrl})}" style="color: #007BFF;">Download</a>
+            </span>
                         </div>
                         <div style="text-align: center;">
                             <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Process Order</button>
