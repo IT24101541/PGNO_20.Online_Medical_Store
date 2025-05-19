@@ -63,6 +63,20 @@
                 Current: <a th:href="@{/orders/download/{fileUrl}(fileUrl=${order.receiptUrl})}" style="color: #007BFF;">Download</a>
             </span>
         </div>
+        <!-- Payment Instructions -->
+        <div class="payment-info">
+            <h4>Payment Instructions</h4>
+            <p><strong>Bank Details:</strong></p>
+            <p>Account Name: GetMED Pvt Ltd.<br />
+                Account No: 287565423195<br />
+                Bank: ABC Bank PLC<br />
+                Branch: Corporate Branch<br />
+                Bank Code: ABCLKLX</p>
+            <ul>
+                <li>The payment can be done via a fund transfer, and the payment slip can be attached above.</li>
+                <li>The payments are accepted by cash and cards at the time of delivering the goods.</li>
+            </ul>
+        </div>
         <div style="text-align: center;">
             <button type="submit" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;" th:text="${order.id != 0} ? 'Update Order' : 'Submit Order'"></button>
             <a th:href="@{/customer/dashboard(section='order')}" style="display: inline-block; margin-left: 10px; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">Cancel</a>
