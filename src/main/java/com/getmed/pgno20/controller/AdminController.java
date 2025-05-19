@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -65,7 +66,12 @@ public class AdminController {
                 model.addAttribute("admin", deleteAdmin != null ? deleteAdmin : admin);
             }
         } else if ("order".equals(section)) {
-            model.addAttribute("orders", orderQueueService.getAllOrders());
+            List<Order> orders = orderQueueService.getAllOrders();
+            // Preprocess medicineNamesString for each order
+            for (Order order : orders) {
+                order.setMedicineNamesString(); // Populate the string from medicineQuantities
+            }
+            model.addAttribute("orders", orders);
         } else if ("shop".equals(section)) {
             List<Medicine> medicines = MedicineFileUtil.readMedicinesFromFile();
             model.addAttribute("medicines", medicines);

@@ -97,4 +97,10 @@ public class Order {
     public void setMedicineNamesString(String medicineNamesString) {
         this.medicineNamesString = medicineNamesString;
     }
+
+    // New method to populate medicineNamesString from medicineQuantities
+    public void setMedicineNamesString() {
+        List<String> names = getMedicineNames();
+        this.medicineNamesString = (names != null && !names.isEmpty()) ? String.join(", ", names) : "None";
+    }
 }
