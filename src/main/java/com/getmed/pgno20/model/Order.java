@@ -8,15 +8,19 @@ import java.util.Map;
 public class Order {
     private int id;
     private String customerEmail;
-    private Map<String, Integer> medicineQuantities = new HashMap<>(); // Medicine name to quantity
+    private Map<String, Integer> medicineQuantities = new HashMap<>();
     private int totalQuantity;
     private String orderDate;
+    private String status;
     private String prescriptionUrl;
     private String receiptUrl;
-    private String status = "PENDING";
+    private String medicineNamesString; // New field for comma-separated medicine names
 
-    public Order() {}
+    // Constructor
+    public Order() {
+    }
 
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -57,6 +61,14 @@ public class Order {
         this.orderDate = orderDate;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getPrescriptionUrl() {
         return prescriptionUrl;
     }
@@ -73,16 +85,16 @@ public class Order {
         this.receiptUrl = receiptUrl;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    // Method to get medicine names as a list for compatibility
     public List<String> getMedicineNames() {
         return new ArrayList<>(medicineQuantities.keySet());
+    }
+
+    // New getter and setter for medicineNamesString
+    public String getMedicineNamesString() {
+        return medicineNamesString;
+    }
+
+    public void setMedicineNamesString(String medicineNamesString) {
+        this.medicineNamesString = medicineNamesString;
     }
 }

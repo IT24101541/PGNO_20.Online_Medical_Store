@@ -95,7 +95,10 @@ public class CustomerController {
         }
 
         model.addAttribute("customer", customer);
-        model.addAttribute("section", section != null ? section : "user");
+        model.addAttribute("section", section); // Preserve the requested section
+        if (section == null) {
+            section = "user"; // Set default only if not specified, after model assignment
+        }
         model.addAttribute("action", action);
 
         @SuppressWarnings("unchecked")
@@ -113,6 +116,7 @@ public class CustomerController {
             }
         }
 
+        System.out.println("Section: " + section); // Debug log
         System.out.println("Selected Medicines before processing: " + selectedMedicines.size());
         selectedMedicines.forEach(med -> System.out.println("Medicine: " + med.getName()));
 
@@ -143,7 +147,7 @@ public class CustomerController {
             if ("send-to-order".equals(action)) {
                 System.out.println("Send to Order clicked. Selected Medicines: " + selectedMedicines.size());
                 if (!selectedMedicines.isEmpty()) {
-                    return "redirect:/customer/dashboard?section=order&action=create";
+                    return "redirect:/customer/orders/new";
                 } else {
                     System.out.println("No medicines selected, staying in shop section.");
                     return "redirect:/customer/dashboard?section=shop";
@@ -151,37 +155,36 @@ public class CustomerController {
             }
         } else if ("order".equals(section)) {
             List<Order> orders = orderQueueService.getCustomerOrders(email);
+            if (orders == null) {
+                orders = new ArrayList<>();
+            }
+            // Preprocess medicineNames into a comma-separated string for each order
+            for (Order order : orders) {
+                List<String> medicineNames = order.getMedicineNames();
+                String medicineNamesString = (medicineNames == null || medicineNames.isEmpty()) ? "None" : String.join(", ", medicineNames);
+                order.setMedicineNamesString(medicineNamesString);
+            }
             model.addAttribute("orders", orders);
             model.addAttribute("selectedMedicines", selectedMedicines);
 
-            if ("create".equals(action) || "edit".equals(action)) {
-                Order order = new Order();
-                if ("edit".equals(action) && id != null) {
-                    order = orders.stream().filter(o -> o.getId() == id).findFirst().orElse(new Order());
-                    // Repopulate selectedMedicines for editing with full Medicine objects
-                    List<Medicine> allMedicines = MedicineFileUtil.readMedicinesFromFile();
-                    selectedMedicines.clear();
-                    selectedMedicines.addAll(order.getMedicineQuantities().keySet().stream()
-                            .map(name -> allMedicines.stream()
-                                    .filter(m -> m.getName().equals(name))
-                                    .findFirst()
-                                    .orElseGet(() -> {
-                                        Medicine med = new Medicine();
-                                        med.setName(name);
-                                        return med;
-                                    }))
-                            .collect(Collectors.toList()));
-                    session.setAttribute("selectedMedicines", selectedMedicines);
-                }
-                order.setCustomerEmail(email);
-                if ("create".equals(action) && !selectedMedicines.isEmpty()) {
-                    for (Medicine med : selectedMedicines) {
-                        order.getMedicineQuantities().put(med.getName(), 1);
-                    }
-                    order.setTotalQuantity(selectedMedicines.size());
-                }
-                System.out.println("Order medicines in create/edit: " + order.getMedicineQuantities());
+            if ("edit".equals(action) && id != null) {
+                Order order = orders.stream().filter(o -> o.getId() == id).findFirst().orElse(new Order());
+                // Repopulate selectedMedicines for editing with full Medicine objects
+                List<Medicine> allMedicines = MedicineFileUtil.readMedicinesFromFile();
+                selectedMedicines.clear();
+                selectedMedicines.addAll(order.getMedicineQuantities().keySet().stream()
+                        .map(name -> allMedicines.stream()
+                                .filter(m -> m.getName().equals(name))
+                                .findFirst()
+                                .orElseGet(() -> {
+                                    Medicine med = new Medicine();
+                                    med.setName(name);
+                                    return med;
+                                }))
+                        .collect(Collectors.toList()));
+                session.setAttribute("selectedMedicines", selectedMedicines);
                 model.addAttribute("order", order);
+                return "order_form"; // Redirect to order_form.html for editing
             }
         } else if ("user".equals(section)) {
             if ("edit".equals(action)) {
@@ -196,11 +199,57 @@ public class CustomerController {
         return "customer_dashboard";
     }
 
-    @PostMapping("/customer/dashboard")
+    @GetMapping("/customer/orders/new")
+    public String showOrderForm(
+            @RequestParam(required = false) Integer orderId,
+            HttpSession session,
+            Model model) {
+        String email = (String) session.getAttribute("loggedInUser");
+        if (email == null) return "redirect:/login";
+
+        Customer customer = customerService.getCustomerByEmail(email);
+        if (customer == null) {
+            model.addAttribute("error", "Customer not found.");
+            return "redirect:/login";
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Medicine> selectedMedicines = (List<Medicine>) session.getAttribute("selectedMedicines");
+        if (selectedMedicines == null) {
+            selectedMedicines = new ArrayList<>();
+            session.setAttribute("selectedMedicines", selectedMedicines);
+        }
+
+        Order order;
+        if (orderId != null) {
+            // Editing an existing order
+            order = orderQueueService.getCustomerOrders(email).stream()
+                    .filter(o -> o.getId() == orderId)
+                    .findFirst()
+                    .orElse(new Order());
+        } else {
+            // Creating a new order
+            order = new Order();
+            order.setCustomerEmail(email);
+            if (!selectedMedicines.isEmpty()) {
+                for (Medicine med : selectedMedicines) {
+                    order.getMedicineQuantities().put(med.getName(), 1); // Default quantity of 1
+                }
+                order.setTotalQuantity(selectedMedicines.size());
+            }
+        }
+
+        model.addAttribute("order", order);
+        model.addAttribute("selectedMedicines", selectedMedicines);
+        return "order_form";
+    }
+
+    @PostMapping("/customer/orders/save")
     public String processOrder(
             @ModelAttribute Order order,
             @RequestParam(required = false) MultipartFile prescription,
             @RequestParam(required = false) MultipartFile receipt,
+            @RequestParam Map<String, String> allParams,
             HttpSession session,
             Model model) throws IOException {
         String email = (String) session.getAttribute("loggedInUser");
@@ -209,24 +258,42 @@ public class CustomerController {
         Customer customer = customerService.getCustomerByEmail(email);
         if (customer == null) return "redirect:/login";
 
-        boolean hasMedicine = !order.getMedicineQuantities().isEmpty();
-        boolean hasPrescription = prescription != null && !prescription.isEmpty();
-        boolean hasReceipt = receipt != null && !receipt.isEmpty();
+        // Check if this is an update (order has an ID) or a new order
+        boolean isUpdate = order.getId() != 0;
+        if (isUpdate) {
+            // Fetch the existing order to preserve fields like status
+            Order existingOrder = orderQueueService.getCustomerOrders(email).stream()
+                    .filter(o -> o.getId() == order.getId())
+                    .findFirst()
+                    .orElse(null);
+            if (existingOrder == null) {
+                model.addAttribute("error", "Order not found.");
+                return "order_form";
+            }
+            order.setStatus(existingOrder.getStatus()); // Preserve status
+        }
 
-        if (!(hasMedicine || hasPrescription) && !hasReceipt) {
-            model.addAttribute("error", "Order must include at least one medicine, prescription, or receipt.");
-            return "redirect:/customer/dashboard?section=order&action=create";
+        // Clear existing quantities and repopulate from form
+        order.getMedicineQuantities().clear();
+        @SuppressWarnings("unchecked")
+        List<Medicine> selectedMedicines = (List<Medicine>) session.getAttribute("selectedMedicines");
+        if (selectedMedicines != null && !selectedMedicines.isEmpty()) {
+            for (Medicine med : selectedMedicines) {
+                String quantityParam = allParams.get("medicineQuantities[" + med.getName() + "]");
+                int quantity = (quantityParam != null && !quantityParam.isEmpty()) ? Integer.parseInt(quantityParam) : 1;
+                order.getMedicineQuantities().put(med.getName(), quantity);
+            }
         }
 
         Path uploadPath = Paths.get(UPLOAD_DIR);
         if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
 
-        if (hasPrescription) {
+        if (prescription != null && !prescription.isEmpty()) {
             String fileName = "prescription_" + System.currentTimeMillis() + ".pdf";
             Files.copy(prescription.getInputStream(), uploadPath.resolve(fileName));
             order.setPrescriptionUrl("/" + UPLOAD_DIR + "/" + fileName);
         }
-        if (hasReceipt) {
+        if (receipt != null && !receipt.isEmpty()) {
             String fileName = "receipt_" + System.currentTimeMillis() + ".pdf";
             Files.copy(receipt.getInputStream(), uploadPath.resolve(fileName));
             order.setReceiptUrl("/" + UPLOAD_DIR + "/" + fileName);
@@ -235,11 +302,17 @@ public class CustomerController {
         order.setCustomerEmail(email);
         order.setOrderDate(LocalDate.now().toString());
         order.setTotalQuantity(order.getMedicineQuantities().values().stream().mapToInt(Integer::intValue).sum());
-        orderQueueService.addOrder(order); // Assumes this updates both queues
+        if (!isUpdate) {
+            order.setStatus("PENDING"); // Set status for new orders only
+        }
 
-        // Clear selectedMedicines only after successful order submission
+        if (isUpdate) {
+            orderQueueService.updateOrder(order); // Update existing order
+        } else {
+            orderQueueService.addOrder(order); // Add new order
+        }
+
         session.setAttribute("selectedMedicines", new ArrayList<Medicine>());
-
         return "redirect:/customer/dashboard?section=order";
     }
 

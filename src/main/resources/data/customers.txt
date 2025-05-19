@@ -2,3 +2,4 @@
 2,Sinduja Bandara,58 Rawatawatte Moratuwa,0729758265,sindu@gmail.com,sindubanda
 3,Sajana,58 Rawatawatte Moratuwa,014528,juma@gmail.com,12345
 4,Linoshia De Mel,95 Weda Mawatha Ganemulla,07295735182,linoshia@gmail.com,lino123
+5,Prasada Peiris,25 Galle Road Moratuwa,0773171691,prasada@gmail.com,prasa123
