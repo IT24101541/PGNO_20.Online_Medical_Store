@@ -4,3 +4,4 @@
 4,Sadhurshan Thiyagaraja,25 Malalasekara Flats Colombo 02,0729758265,shadhu@gmail.com,shadhu123
 5,Prasada Peiris,62 Haldummulla Road Meegahawana,07775915346,prasada@gmail.com,prasa123
 6,Sudesh Peiris,null,null,sudesh@gmail.com,sudi123
+7,Lakmal De Mel,null,null,lakmal@gmail.com,lak123
