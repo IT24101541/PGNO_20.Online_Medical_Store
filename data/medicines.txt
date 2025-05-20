@@ -4,3 +4,4 @@
 5,Gastrezz,Unique gastritis ayurvedic medicine helps in improving acid reflux\, gas relief and stomach ulcer.,450.0,/uploads/medicine_5.jpg
 6,Claritin,Claritin is an antihistamine X antihistamine Medication that relieves symptoms of sneezing\, itching and runny nose by blocking histamine receptors.,10.17,/uploads/medicine_6_1.jpg
 7,RENU FRESH,Renu Fresh Multi-Purpose Solution (355ml) provides a cushion of comfort for your contact lens wear.,2257.2,/uploads/medicine_7_1.jpg
+8,Aspirin,Aspirin is the genericized trademark for acetylsalicylic acid\, a nonsteroidal anti-inflammatory drug used to reduce pain\, fever\, and inflammation\, and as an antithrombotic.,12.1,/uploads/medicine_8.jpg
