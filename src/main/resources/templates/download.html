@@ -1,9 +1,0 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head><title>Download</title><link rel="stylesheet" th:href="@{/style.css}" /></head>
-<body>
-<header><h1>Download File</h1><nav><a th:href="@{/orders}">Back</a></nav></header>
-<main><a th:href="${fileUrl}" th:text="'Download ' + ${fileUrl.substring(fileUrl.lastIndexOf('/') + 1)}" download></a></main>
-<footer><p>© 2025 GetMED | All Rights Reserved</p></footer>
-</body>
-</html>
