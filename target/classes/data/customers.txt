@@ -1,0 +1,7 @@
+1,Yohani Fernando,25 Malalasekara Flats Colombo 02,0715656717,yohani@yahoo.com,yohifer123
+2,Sinduja Bandara,58 Rawatawatte Moratuwa,0729758265,sindu@gmail.com,sindubanda
+3,Sajana,58 Rawatawatte Moratuwa,014528,juma@gmail.com,12345
+4,Linoshia De Mel,95 Weda Mawatha Ganemulla,07295735182,linoshia@gmail.com,lino123
+5,Prasada Peiris,25 Galle Road Moratuwa,0773171691,prasada@gmail.com,prasa123
+6,Uditha De Mel,65 Kotte Road Sri Jayawardenapura,0759879870,uditha@outlook.com,udi123
+7,sajana,kaduwele road,0713463620,sajanasenavirathne@gmail.com,sajana2004

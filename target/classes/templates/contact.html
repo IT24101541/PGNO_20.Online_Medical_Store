@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GetMED</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="icon" type="image/png" th:href="@{/medical-store.webp}" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Contact</h1>
+    <div class="logo">
+        <img th:src="@{/medical-store.webp}" alt="Logo" style="max-width: 95px; height: auto;" />
+    </div>
+    <nav>
+        <a th:href="@{/homepage}">HOME</a>
+        <a th:href="@{/contact}">CONTACT</a>
+    </nav>
+</header>
+
+<main>
+    <section class="contact-details">
+        <div class="text-section">
+            <h2>Get in Touch</h2>
+            <p>You can reach us via the following contact details:</p>
+        </div>
+
+        <!-- Head Office Section -->
+        <div class="location-section">
+            <h3>HEAD OFFICE</h3>
+            <ul>
+                <li><strong>Email:</strong> info@getmed.com</li>
+                <li><strong>Phone:</strong> +94 (38) 229-8759</li>
+                <li><strong>Address:</strong> 123/A, Paratta Road, Keselwatta, Panadura.</li>
+            </ul>
+        </div>
+
+        <!-- Colombo Outlet Section -->
+        <div class="location-section">
+            <h3>COLOMBO OUTLET</h3>
+            <ul>
+                <li><strong>Email:</strong> info.cmb@getmed.com</li>
+                <li><strong>Phone:</strong> +94 (11) 264-8679</li>
+                <li><strong>Address:</strong> 23C, Parkland Building, Colombo 02.</li>
+            </ul>
+        </div>
+
+        <!-- Kalutara Outlet Section -->
+        <div class="location-section">
+            <h3>KALUTARA OUTLET</h3>
+            <ul>
+                <li><strong>Email:</strong> info.klt@getmed.com</li>
+                <li><strong>Phone:</strong> +94 (34) 384-8679</li>
+                <li><strong>Address:</strong> 04, Payagala Road, Kaluwawila, Payagala.</li>
+            </ul>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2025 GetMED | All Rights Reserved</p>
+</footer>
+</body>
+</html>

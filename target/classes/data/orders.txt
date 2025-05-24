@@ -1,0 +1,7 @@
+9,yohani@yahoo.com,Claritin:1|Gastrezz:1|Voltaren:1,3,2025-05-19,,,PENDING
+13,uditha@outlook.com,,0,2025-05-20,/uploads/prescription_1747726082860.pdf,,PENDING
+3,yohani@yahoo.com,Paracetamol:1|Claritin:1,2,2025-05-21,,,PENDING
+14,sajanasenavirathne@gmail.com,Paracetamol:1|penedol:1|Claritin:1,3,2025-05-23,,,PENDING
+7,yohani@yahoo.com,Claritin:1|Voltaren:1,2,2025-05-24,/uploads/prescription_1747672008620.pdf,/uploads/receipt_1747672008811.pdf,PENDING
+11,prasada@gmail.com,Claritin:1|Gastrezz:1,2,2025-05-24,,/uploads/receipt_1747674987025.pdf,PENDING
+8,yohani@yahoo.com,,0,2025-05-24,/uploads/prescription_1747673284884.pdf,/uploads/receipt_1747673285029.pdf,PENDING

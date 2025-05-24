@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GetMED</title>
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <link rel="icon" type="image/png" th:href="@{/medical-store.webp}" />
+</head>
+<body>
+<header>
+    <h1>Home</h1>
+    <div class="logo">
+        <img th:src="@{/medical-store.webp}" alt="Logo" style="max-width: 95px; height: auto;" />
+    </div>
+    <nav>
+        <a th:href="@{/homepage}">HOME</a>
+        <a th:href="@{/contact}">CONTACT</a>
+    </nav>
+</header>
+
+<main>
+    <section style="display: flex; justify-content: space-between; padding: 3em; background-color: #f9f9f9;">
+        <!-- Text Section -->
+        <div style="flex: 1; margin-right: 2em; max-width: 500px;">
+            <h2>Welcome to GetMED!</h2>
+            <p>Your trusted online pharmacy for quality medications, health products, and wellness essentials.</p>
+            <p><strong>Join us today and take the first step towards better health!</strong></p>
+
+            <br>
+            <br>
+            <!-- Buttons (Register & Login) -->
+            <div class="auth-buttons">
+                <a th:href="@{/register}" class="btn register-btn" role="button" title="Register for a new account">Register</a>
+                <a th:href="@{/login}" class="btn login-btn" role="button" title="Log in to your account">Login</a>
+            </div>
+        </div>
+
+        <!-- Image Section (on right) -->
+        <div>
+            <img th:src="@{/medical-store-illustration-download.webp}" alt="Medical Store" style="max-width: 550px; height: auto;" />
+        </div>
+    </section>
+
+    <!-- Additional Information Section (below) -->
+    <section style="padding: 3em; background-color: #f3f3f3; text-align: center;">
+        <h3>Why Choose GetMED?</h3>
+        <ul style="list-style-type: none; padding: 0; text-align: left; margin: 0 auto; display: inline-block;">
+            <li><b>Extensive Product Range:</b> A wide variety of medicines and wellness products.</li>
+            <br>
+            <li><b>Fast Delivery:</b> Quick and reliable delivery to your doorstep.</li>
+            <br>
+            <li><b>Secure Shopping:</b> Shop with confidence using our secure payment methods.</li>
+            <br>
+            <li><b>Excellent Customer Service:</b> Dedicated support team to help with your needs.</li>
+        </ul>
+    </section>
+</main>
+
+<footer>
+    <p>© 2025 GetMED | All Rights Reserved</p>
+</footer>
+</body>
+</html>
