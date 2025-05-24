@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - GetMED</title>
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <link rel="icon" type="image/png" th:href="@{/medical-store.webp}" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Register</h1>
+    <div class="logo">
+        <img th:src="@{/medical-store.webp}" alt="Logo" style="max-width: 95px; height: auto;" />
+    </div>
+    <nav>
+        <a th:href="@{/homepage}">HOME</a>
+        <a th:href="@{/contact}">CONTACT</a>
+    </nav>
+</header>
+
+<main style="text-align: center; padding: 2em;">
+    <h2>Sign Up</h2>
+    <div th:if="${message}" style="color: green; text-align: center;">
+        <p th:text="${message}"></p>
+    </div>
+    <div th:if="${error}" style="color: red; text-align: center;">
+        <p th:text="${error}"></p>
+    </div>
+    <form th:action="@{/register}" th:object="${user}" method="post" style="max-width: 400px; margin: 0 auto;">
+        <div style="margin-bottom: 15px;">
+            <label for="role">Role:</label><br />
+            <select id="role" th:field="*{role}" required style="padding: 8px; width: 100%;">
+                <option value="admin">Admin</option>
+                <option value="customer">Customer</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="name">Name:</label><br />
+            <input type="text" id="name" th:field="*{name}" required placeholder="Enter your name" style="padding: 10px; width: 100%;" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="address">Address:</label><br />
+            <input type="text" id="address" th:field="*{address}" required placeholder="Enter your address" style="padding: 10px; width: 100%;" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="contactNo">Contact No:</label><br />
+            <input type="text" id="contactNo" th:field="*{contactNo}" required placeholder="Enter your contact number" style="padding: 10px; width: 100%;" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="email">Email:</label><br />
+            <input type="email" id="email" th:field="*{email}" required placeholder="Enter your email" style="padding: 10px; width: 100%;" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="password">Password:</label><br />
+            <input type="password" id="password" th:field="*{password}" required placeholder="Enter your password" style="padding: 10px; width: 100%;" />
+        </div>
+        <button type="submit" style="padding: 12px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Register</button>
+    </form>
+    <p style="text-align: center; margin-top: 1em;">
+        Already have an account? <a th:href="@{/login}">Login here</a>
+    </p>
+</main>
+
+<footer style="text-align: center;">
+    <p>© 2025 GetMED | All Rights Reserved</p>
+</footer>
+</body>
+</html>

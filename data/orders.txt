@@ -1,0 +1,1 @@
+1,yohani@yahoo.com,Paracetamol:2|Ibuprofen:1,3,2025-05-10,/uploads/prescription_123456.pdf,/uploads/receipt_123456.pdf,PENDING
