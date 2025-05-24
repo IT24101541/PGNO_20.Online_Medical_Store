@@ -1,0 +1,8 @@
+1,Umesh Luke,122/A Paratta Road Keselwatta,0788109676,umeshluke@outlook.com,umesh#2003
+2,Sinduja Bandara,58 Rawatawatte Moratuwa,0746589547,sindu@gmail.com,banda#123
+3,Nipula Nuwanjith,65 Main Road Gampaha,0764218596,nuwanjith123@gmail.com,nuwan#123
+4,Sadhurshan Thiyagaraja,25 Malalasekara Flats Colombo 02,0729758265,shadhu@gmail.com,shadhu123
+5,Prasada Peiris,62 Haldummulla Road Meegahawana,07775915346,prasada@gmail.com,prasa123
+6,Sudesh Peiris,null,null,sudesh@gmail.com,sudi123
+7,Lakmal De Mel,null,null,lakmal@gmail.com,lak123
+8,sajana,kaduwele road ,0713463620,sajanasenavirathne@gmail.com,sajana2004
