@@ -210,28 +210,14 @@
 
             <!-- Update Medicine -->
             <div th:case="'update'">
-                <form th:action="@{/admin/shop/update}" method="post" enctype="multipart/form-data" class="form-container">
+                <form th:action="@{/medicine/update}" method="post" enctype="multipart/form-data">
+                    <!-- Medicine fields -->
                     <input type="hidden" name="id" th:value="${medicine.id}" />
-                    <div class="form-group">
-                        <label for="name-medicine-update">Medicine Name</label>
-                        <input type="text" id="name-medicine-update" name="name" th:value="${medicine.name}" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="description-medicine-update">Description</label>
-                        <textarea id="description-medicine-update" name="description" th:text="${medicine.description}" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="price-medicine-update">Price (Rs.)</label>
-                        <input type="number" id="price-medicine-update" name="price" th:value="${medicine.price}" step="0.01" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="image-medicine-update">Image (Optional)</label>
-                        <input type="file" id="image-medicine-update" name="image" />
-                    </div>
-                    <div style="text-align: center;">
-                        <button type="submit" class="save-btn"><i class="fas fa-save"></i> Update Medicine</button>
-                        <a th:href="@{/admin/dashboard(section='shop')}" class="cancel-btn"><i class="fas fa-times"></i> Cancel</a>
-                    </div>
+                    <input type="text" name="name" th:value="${medicine.name}" />
+                    <input type="text" name="description" th:value="${medicine.description}" />
+                    <input type="number" step="0.01" name="price" th:value="${medicine.price}" />
+                    <input type="file" name="image" />
+                    <button type="submit">Update Medicine</button>
                 </form>
             </div>
 
@@ -246,10 +232,9 @@
                         <strong>Price:</strong> <span th:text="${medicine.price}"></span>
                         <strong>Image:</strong> <img th:src="${medicine.imageUrl}" th:if="${medicine.imageUrl}" style="max-width: 100px;" alt="Medicine Image" />
                     </div>
-                    <form th:action="@{/admin/shop/delete}" method="post" th:if="${medicine != null}" style="margin-top: 20px;">
+                    <form th:action="@{/medicine/delete}" method="post">
                         <input type="hidden" name="id" th:value="${medicine.id}" />
-                        <button type="submit" class="delete-btn"><i class="fas fa-trash"></i> Delete</button>
-                        <a th:href="@{/admin/dashboard(section='shop')}" class="cancel-btn"><i class="fas fa-times"></i> Cancel</a>
+                        <button type="submit">Delete</button>
                     </form>
                 </div>
             </div>

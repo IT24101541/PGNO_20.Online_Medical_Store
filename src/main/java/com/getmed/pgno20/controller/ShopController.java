@@ -1,15 +1,18 @@
 package com.getmed.pgno20.controller;
 
+import com.getmed.pgno20.model.Admin;
 import com.getmed.pgno20.model.Medicine;
 import com.getmed.pgno20.util.MedicineFileUtil;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,7 +21,9 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/shop")
-public class ShopController {
+public class ShopController extends MedicineFileUtil {
+
+    private static final String UPLOAD_DIR = "uploads"; // Directory in the project root
 
     @GetMapping("/customer-view")
     public String viewMedicines(@RequestParam(required = false) String sort, HttpSession session, Model model) {
@@ -60,7 +65,7 @@ public class ShopController {
                 .filter(m -> m.getId() == id)
                 .findFirst()
                 .orElse(null);
-        if (medicine == null) return "redirect:/customer/dashboard?section=shop";
+        if (medicine == null) return "redirect:/shop/customer-view";
 
         @SuppressWarnings("unchecked")
         List<Medicine> selectedMedicines = (List<Medicine>) session.getAttribute("selectedMedicines");
@@ -95,9 +100,49 @@ public class ShopController {
         @SuppressWarnings("unchecked")
         List<Medicine> selectedMedicines = (List<Medicine>) session.getAttribute("selectedMedicines");
         if (selectedMedicines == null || selectedMedicines.isEmpty()) {
-            return "redirect:/customer/dashboard?section=shop";
+            return "redirect:/shop/customer-view";
         }
         return "redirect:/customer/dashboard?section=order&action=create";
+    }
+
+    @PostMapping("/update")
+    public String updateMedicine(@ModelAttribute Medicine medicine, @RequestParam(required = false) MultipartFile image, HttpSession session) throws IOException {
+        Admin loggedInAdmin = (Admin) session.getAttribute("loggedInAdmin"); // Assuming admin-only access
+        if (loggedInAdmin == null) {
+            return "redirect:/login";
+        }
+        List<Medicine> medicines = MedicineFileUtil.readMedicinesFromFile();
+        medicines.removeIf(m -> m.getId() == medicine.getId());
+
+        if (image != null && !image.isEmpty()) {
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String fileName = "medicine_" + medicine.getId() + ".jpg";
+            String uniqueFileName = generateUniqueFileName(fileName, uploadPath);
+            Path filePath = uploadPath.resolve(uniqueFileName);
+            Files.copy(image.getInputStream(), filePath);
+
+            medicine.setImageUrl("/" + UPLOAD_DIR + "/" + uniqueFileName);
+        }
+
+        medicines.add(medicine);
+        MedicineFileUtil.writeMedicinesToFile(medicines);
+        return "redirect:/shop/customer-view";
+    }
+
+    @PostMapping("/delete")
+    public String deleteMedicine(@RequestParam("id") int id, HttpSession session) {
+        Admin loggedInAdmin = (Admin) session.getAttribute("loggedInAdmin"); // Assuming admin-only access
+        if (loggedInAdmin == null) {
+            return "redirect:/login";
+        }
+        List<Medicine> medicines = MedicineFileUtil.readMedicinesFromFile();
+        medicines.removeIf(m -> m.getId() == id);
+        MedicineFileUtil.writeMedicinesToFile(medicines);
+        return "redirect:/shop/customer-view";
     }
 
     // QuickSort implementation (unchanged)
@@ -124,5 +169,24 @@ public class ShopController {
         list.set(i + 1, list.get(high));
         list.set(high, temp);
         return i + 1;
+    }
+
+    private String generateUniqueFileName(String originalFileName, Path uploadPath) {
+        String fileName = originalFileName;
+        String extension = "";
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            extension = fileName.substring(lastDotIndex);
+            fileName = fileName.substring(0, lastDotIndex);
+        }
+
+        int counter = 1;
+        Path filePath = uploadPath.resolve(originalFileName);
+        while (Files.exists(filePath)) {
+            String newFileName = fileName + "_" + counter + extension;
+            filePath = uploadPath.resolve(newFileName);
+            counter++;
+        }
+        return filePath.getFileName().toString();
     }
 }

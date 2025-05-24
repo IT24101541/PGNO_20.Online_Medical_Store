@@ -4,6 +4,7 @@ import com.getmed.pgno20.model.Admin;
 import com.getmed.pgno20.model.Medicine;
 import com.getmed.pgno20.model.Order;
 import com.getmed.pgno20.service.AdminService;
+import com.getmed.pgno20.service.MedicineService;
 import com.getmed.pgno20.service.OrderQueueService;
 import com.getmed.pgno20.util.MedicineFileUtil;
 import com.getmed.pgno20.util.OrderFileUtil;
@@ -14,27 +15,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminController {
+public class AdminController extends MedicineFileUtil {
 
     private final AdminService adminService;
     private final OrderQueueService orderQueueService;
-
-    private static final String UPLOAD_DIR = "uploads"; // Directory in the project root
+    private final MedicineService medicineService;
 
     @Autowired
-    public AdminController(AdminService adminService, OrderQueueService orderQueueService) {
+    public AdminController(AdminService adminService, OrderQueueService orderQueueService, MedicineService medicineService) {
         this.adminService = adminService;
         this.orderQueueService = orderQueueService;
+        this.medicineService = medicineService;
     }
 
     @GetMapping("/dashboard")
@@ -67,9 +63,8 @@ public class AdminController {
             }
         } else if ("order".equals(section)) {
             List<Order> orders = orderQueueService.getAllOrders();
-            // Preprocess medicineNamesString for each order
             for (Order order : orders) {
-                order.setMedicineNamesString(); // Populate the string from medicineQuantities
+                order.setMedicineNamesString();
             }
             model.addAttribute("orders", orders);
         } else if ("shop".equals(section)) {
@@ -118,29 +113,7 @@ public class AdminController {
         if (loggedInAdmin == null) {
             return "redirect:/login";
         }
-        List<Medicine> medicines = MedicineFileUtil.readMedicinesFromFile();
-        int maxId = medicines.stream().mapToInt(Medicine::getId).max().orElse(0) + 1;
-        medicine.setId(maxId);
-
-        if (image != null && !image.isEmpty()) {
-            // Create the uploads directory if it doesn't exist
-            Path uploadPath = Paths.get(UPLOAD_DIR);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            // Generate a unique filename
-            String fileName = "medicine_" + maxId + ".jpg";
-            String uniqueFileName = generateUniqueFileName(fileName, uploadPath);
-            Path filePath = uploadPath.resolve(uniqueFileName);
-            Files.copy(image.getInputStream(), filePath);
-
-            // Set the image URL for serving in the web app
-            medicine.setImageUrl("/" + UPLOAD_DIR + "/" + uniqueFileName);
-        }
-
-        medicines.add(medicine);
-        MedicineFileUtil.writeMedicinesToFile(medicines);
+        medicineService.saveMedicine(medicine, image);
         return "redirect:/admin/dashboard?section=shop";
     }
 
@@ -150,28 +123,7 @@ public class AdminController {
         if (loggedInAdmin == null) {
             return "redirect:/login";
         }
-        List<Medicine> medicines = MedicineFileUtil.readMedicinesFromFile();
-        medicines.removeIf(m -> m.getId() == medicine.getId());
-
-        if (image != null && !image.isEmpty()) {
-            // Create the uploads directory if it doesn't exist
-            Path uploadPath = Paths.get(UPLOAD_DIR);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            // Generate a unique filename
-            String fileName = "medicine_" + medicine.getId() + ".jpg";
-            String uniqueFileName = generateUniqueFileName(fileName, uploadPath);
-            Path filePath = uploadPath.resolve(uniqueFileName);
-            Files.copy(image.getInputStream(), filePath);
-
-            // Set the image URL for serving in the web app
-            medicine.setImageUrl("/" + UPLOAD_DIR + "/" + uniqueFileName);
-        }
-
-        medicines.add(medicine);
-        MedicineFileUtil.writeMedicinesToFile(medicines);
+        medicineService.updateMedicine(medicine, image);
         return "redirect:/admin/dashboard?section=shop";
     }
 
@@ -181,9 +133,7 @@ public class AdminController {
         if (loggedInAdmin == null) {
             return "redirect:/login";
         }
-        List<Medicine> medicines = MedicineFileUtil.readMedicinesFromFile();
-        medicines.removeIf(m -> m.getId() == id);
-        MedicineFileUtil.writeMedicinesToFile(medicines);
+        medicineService.deleteMedicine(id);
         return "redirect:/admin/dashboard?section=shop";
     }
 
@@ -202,24 +152,5 @@ public class AdminController {
             }
         }
         return "redirect:/admin/dashboard?section=order";
-    }
-
-    private String generateUniqueFileName(String originalFileName, Path uploadPath) {
-        String fileName = originalFileName;
-        String extension = "";
-        int lastDotIndex = fileName.lastIndexOf('.');
-        if (lastDotIndex > 0) {
-            extension = fileName.substring(lastDotIndex);
-            fileName = fileName.substring(0, lastDotIndex);
-        }
-
-        int counter = 1;
-        Path filePath = uploadPath.resolve(originalFileName);
-        while (Files.exists(filePath)) {
-            String newFileName = fileName + "_" + counter + extension;
-            filePath = uploadPath.resolve(newFileName);
-            counter++;
-        }
-        return filePath.getFileName().toString();
     }
 }
